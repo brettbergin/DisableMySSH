@@ -34,7 +34,7 @@ class TestDisableMySSH(unittest.TestCase):
                 "IpProtocol": "tcp",
                 "IpRanges": [
                     {
-                        "CidrIp": "0.0.0.0/0", 
+                        "CidrIp": "0.0.0.0/0",
                         "Description": "SSH From 0.0.0.0"
                     }
                 ],
@@ -69,5 +69,6 @@ class TestDisableMySSH(unittest.TestCase):
             if grp["GroupName"] != "default"
         ]
 
-        result = self.aws._inspect_instance_security_groups(groups=all_sec_group_ids)
+        result = self.aws._inspect_instance_security_groups(
+            groups=all_sec_group_ids)
         self.assertIsInstance(result, list)

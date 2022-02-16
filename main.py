@@ -10,7 +10,7 @@ from DisableMySSH.aws import AWS
 """
 Hello,
 
-Thanks for reading! This python script is meant to satisfy the requirements for the interview assignment. Please feel to reach out to me via email, 
+Thanks for reading! This python script is meant to satisfy the requirements for the interview assignment. Please feel to reach out to me via email,
 if you have any questions or concerns.
 
 Thanks!
