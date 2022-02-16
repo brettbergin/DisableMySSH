@@ -22,10 +22,12 @@ class AWS(object):
         for perm in ip_perms:
 
             # Only returns and ingress rule that has a 0.0.0.0 ingress.
-            ip_ranges = [ip for ip in perm["IpRanges"] if ip["CidrIp"] == "0.0.0.0/0"]
+            ip_ranges = [ip for ip in perm["IpRanges"]
+                         if ip["CidrIp"] == "0.0.0.0/0"]
 
             # Ensures the from_port is 22 and that we have at least on record in our ip_ranges list.
-            # If no element exists in our ip_ranges list, then we dont have an ingress rule matching our condition.
+            # If no element exists in our ip_ranges list, then we dont have an
+            # ingress rule matching our condition.
             if perm.get("FromPort") == 22 and len(ip_ranges) > 0:
                 violation_count += 1
 
@@ -85,7 +87,8 @@ class AWS(object):
         err_count = 0
         for instance in instances:
             # Returns a list of security groups that are attached to this instance
-            # that have groups with ingress rules that have a CIDR of 0.0.0.0 with a from_port of 22.
+            # that have groups with ingress rules that have a CIDR of 0.0.0.0
+            # with a from_port of 22.
             affected_instance_groups = self._inspect_instance_security_groups(
                 groups=[grp["GroupId"] for grp in instance["SecurityGroups"]]
             )
@@ -94,17 +97,20 @@ class AWS(object):
                 f"Instance: {instance['InstanceId']} has {len(affected_instance_groups)} security groups with ingress violation(s)."
             )
 
-            # If the instance doesnt have any security groups found with ingress violations, we move to the next instance.
+            # If the instance doesnt have any security groups found with
+            # ingress violations, we move to the next instance.
             if not len(affected_instance_groups) > 0:
                 continue
 
-            # At this point we have found security groups with ingress violations.
+            # At this point we have found security groups with ingress
+            # violations.
             for group in affected_instance_groups:
                 self.logger.info(
                     f"!!! Found affected instance: {instance['InstanceId']} where group {group.group_name} has port 22 allowed from 0.0.0.0."
                 )
 
-                # If the ssh disable configuration has been set to true, we will revoke the ingress on said group.
+                # If the ssh disable configuration has been set to true, we
+                # will revoke the ingress on said group.
                 if ssh_disabled:
                     self.logger.info(
                         f"Attempting To Revoke SSH Ingress From 0.0.0.0 For Security Group: {group.group_id}."
