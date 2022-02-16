@@ -66,9 +66,7 @@ class Config(object):
         return boto3.resource("ec2", region_name=self.aws_region)
 
     def perform_ssh_remediation(self) -> bool:
-        """
-        This function is called to determine if the client would like to remediate the ssh open ingress rules.
-        """
+        """This function is called to determine if the client would like to remediate the ssh open ingress rules."""
 
         args = self._handle_args()
         return True if args.remediate.lower() == "true" else False
@@ -83,9 +81,9 @@ class AWS(object):
         self.ec2_resource = self.config.ec2_resource()
 
     def _check_for_ingress_violations(self, ip_perms: list) -> bool:
+        """This function iterates over all ip permissions in a group, and evaluates them for the case of 0.0.0.0:22.
+        If found, we increment a count from 0. If said count results in a number greater than zero, we return True.
         """
-        This function iterates over all ip permissions in a group, and evaluates them for the case of 0.0.0.0:22.
-        If found, we increment a count from 0. If said count results in a number greater than zero, we return True."""
 
         violation_count = 0
 
@@ -102,18 +100,20 @@ class AWS(object):
         return True if violation_count > 0 else False
 
     def _inspect_instance_security_groups(self, groups: list) -> list:
+        """This function iterates over all the security groups attached to an instance, and checks for violations.
+        If found, the security group object is appended into a list of affected groups, and returned.
         """
-        This function iterates over all the security groups attached to an instance, and checks for violations.
-        If found, the security group object is appended into a list of affected groups, and returned."""
 
         group_violations = []
 
         for group_id in groups:
             try:
                 sec_group = self.ec2_resource.SecurityGroup(id=group_id)
-            
+
             except Exception as err:
-                self.logger.error(f"Unable to create a security group object using SG ID: {group_id}. Error: {err}.")
+                self.logger.error(
+                    f"Unable to create a security group object using SG ID: {group_id}. Error: {err}."
+                )
                 continue
 
             group_has_violations = self._check_for_ingress_violations(
@@ -139,7 +139,9 @@ class AWS(object):
             response = self.ec2_client.describe_instances()
 
         except Exception as err:
-            self.logger.error(f"Unable to fetch list of AWS EC2 instances. Error: {err}.")
+            self.logger.error(
+                f"Unable to fetch list of AWS EC2 instances. Error: {err}."
+            )
             return False
 
         # Parses and flattens all instances from the response from AWS API.
@@ -179,9 +181,11 @@ class AWS(object):
                             CidrIp="0.0.0.0/0", FromPort=22, ToPort=22, IpProtocol="tcp"
                         )
                     except Exception as err:
-                        self.logger.error(f"Unable to revoke ingress for SG: {group.group_id}. Error: {err}.")
+                        self.logger.error(
+                            f"Unable to revoke ingress for SG: {group.group_id}. Error: {err}."
+                        )
                         err_count += 1
-            
+
         return True if err_count == 0 else False
 
 
