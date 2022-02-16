@@ -1,5 +1,6 @@
 # DisableMySSH
-This application disables ALL EC2 security group ingress rules that define a 0.0.0.0 ingress on port 22. Via a command line argument, the user can specify whether or not to reovoke the ingress rule by providing the `-r` or `--remediate` flag to main.py. When specifying `true` the application will call `group.invoke_ingress()` function. When specifying `false` the aplpication will output the security group violations found to STDOUT.
+This application disables ALL EC2 security group ingress rules that define a 0.0.0.0 ingress on port 22. 
+
 
 Only security groups that are used by an ec2 instance are in scope for this audit. Because the "Security group allowing 0.0.0.0/0 ingress on port 22 to an EC2 instance" vulnerability was chosen for this assigment, the following logic was implemented:
 
@@ -17,12 +18,17 @@ $ source ~/.venv/bin/activate
 ```
 
 # Usage
+Via a command line argument, the user can specify whether or not to revoke the ingress rule by providing the `-r` or `--remediate` flag. 
+
+- When specifying `true` the application will revoke the ingress rule on the affected security group.
+- When specifying `false` the application will output the security group violations found to STDOUT.
+
 >If you would like to revoke the ingress access from any Security Group that has a 0.0.0.0:22 ingress rule, run with `true`.
 ```
 (.venv) $ AWS_PROFILE=YOUR_PROFILE python main.py -r true
 ```
 
->If you would like to simply see the output of what ec2 instances have security groups with a 0.0.0.0:22 ingress rule, run with `false`.
+>If you would like to see the output of what ec2 instances have security groups with a 0.0.0.0:22 ingress rule, run with `false`.
 ```
 (.venv) $ AWS_PROFILE=YOUR_PROFILE python main.py -r false
 ```
