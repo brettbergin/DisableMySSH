@@ -1,12 +1,20 @@
 #!/usr/bin/env python3
 
-import os
 import sys
 import logging
 import argparse
 
 import boto3
 
+"""
+Hello,
+
+This python script is meant to satisfy the requirements for the interview assignment. Please feel to reach out to me via email, 
+if you have any questions or concerns.
+
+Thanks!
+Brett
+"""
 
 class Logger(object):
     def __init__(self, level: str) -> None:
@@ -158,7 +166,7 @@ class AWS(object):
                 groups=[grp["GroupId"] for grp in instance["SecurityGroups"]]
             )
 
-            self.logger.debug(
+            self.logger.info(
                 f"Instance: {instance['InstanceId']} has {len(affected_instance_groups)} security groups with ingress violation(s)."
             )
 
@@ -174,7 +182,7 @@ class AWS(object):
 
                 # If the ssh disable configuration has been set to true, we will revoke the ingress on said group.
                 if ssh_disabled:
-                    self.logger.info(f"Revoking Ingress For Group: {group.group_id}.")
+                    self.logger.info(f"Attempting To Revoke SSH Ingress From 0.0.0.0 For Security Group: {group.group_id}.")
 
                     try:
                         group.revoke_ingress(
@@ -194,8 +202,8 @@ def main() -> None:
     logger, config, and aws class. Finally, it will invoke the audit of ec2 instances.
     """
 
-    config = Config(aws_region=os.environ["AWS_REGION"])
-    logger = Logger(level="DEBUG").setup_logging()
+    config = Config(aws_region="us-east-1")
+    logger = Logger(level="INFO").setup_logging()
 
     aws = AWS(config=config, logger=logger)
 
