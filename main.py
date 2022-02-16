@@ -142,6 +142,7 @@ class AWS(object):
             self.logger.error(f"Unable to fetch list of AWS EC2 instances. Error: {err}.")
             return False
 
+        # Parses and flattens all instances from the response from AWS API.
         reservations = [i["Instances"] for i in response["Reservations"]]
         instances = [
             instance for reservation in reservations for instance in reservation
